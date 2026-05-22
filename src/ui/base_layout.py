@@ -6,36 +6,30 @@ def style_background_home():
         <style>
                 
                 .stApp {
-                    background: #5865F2 !important;
+                    background: linear-gradient(135deg, #0f0c29, #302b63) !important;
                 }
 
-                .stApp div[data-testid="stColumn"]{
-                    background-color: #1E3A8A !important;
-                    padding:1.5rem !important;
+                .stApp div[data-testid="stColumn"] {
+                    background-color: rgba(255,255,255,0.1) !important;
+                    padding: 1.5rem !important;
                     border-radius: 5rem !important;
+                    border: 1px solid rgba(255,255,255,0.2) !important;
                 }
-
 
         </style>
 """, unsafe_allow_html=True)
-    
-
 
 
 def style_background_dashboard():
     st.markdown("""
        <style>
                 
-                .stApp{
-                    background: #55412c !important;
+                .stApp {
+                    background: linear-gradient(135deg, #0f0c29, #302b63) !important;
                 }
 
-
         </style>
-""", 
-    unsafe_allow_html=True
-
-)
+""", unsafe_allow_html=True)
 
 
 def style_base_layout():
@@ -44,65 +38,70 @@ def style_base_layout():
         @import url('https://fonts.googleapis.com/css2?family=Climate+Crisis:YEAR@1979&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Climate+Crisis:YEAR@1979&family=Outfit:wght@100..900&display=swap');
 
-                #MainMenu, footer, header{
+                #MainMenu, footer, header {
                     visibility: hidden;
                 }
 
                 .block-container {
-                    padding-top:1.5rem !important;
+                    padding-top: 1.5rem !important;
                 }
              
                 h1 {
                     font-family: 'Climate Crisis', sans-serif !important;
                     font-size: 3.5rem !important;
-                    line-height:1.1 !important;
-                    margin-botton: 0rem !important;
-                    color: #E0E3FF !important;
-                    }
+                    line-height: 1.1 !important;
+                    color: #ffffff !important;
+                }
                 
                 h2 {
                     font-family: 'Climate Crisis', sans-serif !important;
                     font-size: 2rem !important;
-                    line-height:1.1 !important;
-                    margin-botton:0rem !important;
-                    color: #E0E3FF !important;
-                    }
+                    line-height: 1.1 !important;
+                    color: #ffffff !important;
+                    background: none !important;
+                }
                 
-                h3, h4, p, span, {
-                    font-family:'Outfit', sans-serif;        
+                h3, h4, p, span {
+                    font-family: 'Outfit', sans-serif;
+                    color: #ffffff !important;
                 }
 
+                label {
+                    font-family: 'Outfit', sans-serif !important;
+                    color: #ffffff !important;
+                    font-weight: 600 !important;
+                }
 
-                button{
+                button {
                     border-radius: 1.5rem !important;
                     background: #5865F2 !important;
-                    color: black !important;
+                    color: #ffffff !important;
                     padding: 10px 20px !important;
                     border: none !important;
+                    font-weight: 600 !important;
                     transition: transform 0.25s ease-in-out !important;
                 }
 
-                button[kind="secondary"]{
+                button[kind="secondary"] {
                     border-radius: 1.5rem !important;
                     background: #EB459E !important;
-                    color: black !important;
+                    color: #ffffff !important;
                     padding: 10px 20px !important;
                     border: none !important;
                     transition: transform 0.25s ease-in-out !important;
                 }
 
-                button[kind="tertiary"]{
+                button[kind="tertiary"] {
                     border-radius: 1.5rem !important;
-                    background: black !important;
-                    color: white !important;
+                    background: #000000 !important;
+                    color: #ffffff !important;
                     padding: 10px 20px !important;
                     border: none !important;
                     transition: transform 0.25s ease-in-out !important;
                 }
 
-
-                button:hover{
-                    transform: scale(1.05)
+                button:hover {
+                    transform: scale(1.05);
                 }
 
         </style> 
