@@ -23,7 +23,7 @@ from src.database.db import (
     get_all_students,
     create_student,
     get_student_subjects,
-    get_student_attendence,
+    get_student_attendance,
     unenroll_student_to_subject
 )
 
@@ -32,7 +32,6 @@ from src.pipelines.voice_pipeline import get_voice_embedding
 
 def student_dashboard():
 
-    # FIX 1: pehle assign karo phir use karo
     student_data = st.session_state.student_data
     student_id = student_data['student_id']
 
@@ -80,7 +79,7 @@ def student_dashboard():
 
     with st.spinner('Loading Your Enroll Subjects.....'):
         subjects = get_student_subjects(student_id)
-        logs = get_student_attendence(student_id)
+        logs = get_student_attendance(student_id)
 
     stats_map = {}
 
@@ -90,7 +89,6 @@ def student_dashboard():
             stats_map[sid] = {"total": 0, "attended": 0}
         stats_map[sid]['total'] += 1
 
-        # FIX 2: 'logs' nahi 'log' hoga
         if log.get('is_present'):
             stats_map[sid]['attended'] += 1
 
@@ -102,7 +100,6 @@ def student_dashboard():
 
         stats = stats_map.get(sid, {"total": 0, "attended": 0})
 
-  
         def unenroll_button(student_id=student_id, sid=sid):
             if st.button(
                 "Unenroll From This Course..",
@@ -121,11 +118,9 @@ def student_dashboard():
                 code=sub['subject_code'],
                 section=sub['section'],
                 stats=[
-                   
                     ('📅', 'Total', stats['total']),
                     ('✅', 'Attended', stats['attended']),
                 ],
-                
                 footer_callback=unenroll_button
             )
 

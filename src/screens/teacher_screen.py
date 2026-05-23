@@ -14,9 +14,9 @@ from src.pipelines.face_pipeline import predict_attendance
 from src.database.config import supabase
 from datetime import datetime
 import pandas as pd
-from src.componets.dialog_attendence_results import attendence_result_dialog
+from src.componets.dialog_attendance_results import attendance_result_dialog
 import numpy as np
-from src.componets.dialog_voice_attendence import voice_attendence_dialog
+from src.componets.dialog_voice_attendance import voice_attendance_dialog
 
 
 from src.database.db import (
@@ -24,7 +24,7 @@ from src.database.db import (
     create_teacher,
     teacher_login,
     get_teacher_subjects,
-    get_attendence_for_teacher
+    get_attendance_for_teacher
 )
 
 from src.componets.dialog_create_subject import (
@@ -177,7 +177,7 @@ def teacher_dashboard():
     if st.session_state.current_teacher_tab == (
         "take_attendance"
     ):
-        teacher_tab_taken_attendence()
+        teacher_tab_take_attendance()
 
     elif st.session_state.current_teacher_tab == (
         "manage_subjects"
@@ -187,17 +187,17 @@ def teacher_dashboard():
     elif st.session_state.current_teacher_tab == (
         "attendance_records"
     ):
-        teacher_tab_attendence_records()
+        teacher_tab_attendance_records()
 
     footer_dashboard()
 
 
-def teacher_tab_taken_attendence():
+def teacher_tab_take_attendance():
     teacher_id = st.session_state.teacher_data['teacher_id']
     st.header('Take AI Attendance')
 
-    if 'attendence_images' not in st.session_state:
-        st.session_state.attendence_images = []
+    if 'attendance_images' not in st.session_state:
+        st.session_state.attendance_images = []
 
     subjects = get_teacher_subjects(teacher_id)
 
@@ -219,12 +219,12 @@ def teacher_tab_taken_attendence():
     selected_subject_id = subject_options[selected_subject_label]
     st.divider()
 
-    if st.session_state.attendence_images:
+    if st.session_state.attendance_images:
         st.header('Added Photos')
-    galllery_cols = st.columns(4)
+    gallery_cols = st.columns(4)
 
-    for idx, img in enumerate(st.session_state.attendence_images):
-        with galllery_cols[idx % 4]:
+    for idx, img in enumerate(st.session_state.attendance_images):
+        with gallery_cols[idx % 4]:
             st.image(img, width='stretch', caption=f'Photo{idx+1}')
 
     c1, c2, c3 = st.columns(3)
@@ -236,11 +236,11 @@ def teacher_tab_taken_attendence():
             type='tertiary',
             icon=':material/delete:'
         ):
-            st.session_state.attendence_images = []
+            st.session_state.attendance_images = []
             st.rerun()
 
     with c2:
-        has_photos = bool(st.session_state.attendence_images)
+        has_photos = bool(st.session_state.attendance_images)
 
         if st.button(
             'Run Face Analysis..',
@@ -254,7 +254,7 @@ def teacher_tab_taken_attendence():
                 all_detected_id = {}
 
                 for idx, img in enumerate(
-                    st.session_state.attendence_images
+                    st.session_state.attendance_images
                 ):
 
                     img_np = np.array(img.convert('RGB'))
@@ -291,7 +291,7 @@ def teacher_tab_taken_attendence():
                 else:
 
                     results = []
-                    attendence_to_log = []
+                    attendance_to_log = []
 
                     current_timestamp = (
                         datetime.now().strftime(
@@ -325,26 +325,26 @@ def teacher_tab_taken_attendence():
                             )
                         })
 
-                        attendence_to_log.append({
+                        attendance_to_log.append({
                             'student_id': student['student_id'],
                             'subject_id': selected_subject_id,
                             'timestamp': current_timestamp,
                             'is_present': bool(is_present)
                         })
 
-                    attendence_result_dialog(
+                    attendance_result_dialog(
                         pd.DataFrame(results),
-                        attendence_to_log
+                        attendance_to_log
                     )
 
     with c3:
         if st.button(
-            'Use Voice Attendence',
+            'Use Voice Attendance',
             type='primary',
             width='stretch',
             icon=':material/mic:'
         ):
-            voice_attendence_dialog(selected_subject_id)
+            voice_attendance_dialog(selected_subject_id)
 
 
 def teacher_tab_manage_subjects():
@@ -362,14 +362,14 @@ def teacher_tab_manage_subjects():
     subjects = get_teacher_subjects(teacher_id)
 
     if subjects:
-        for sub in subjects:                          # ✅ FIX: everything inside the loop now
+        for sub in subjects:
 
             stats = [
                 ("🫂", "Students", sub['total_students']),
                 ("🕰️", "Classes", sub['total_classes']),
             ]
 
-            def share_btn(sub=sub):                   # ✅ FIX: default arg captures current sub
+            def share_btn(sub=sub):
                 if st.button(
                     f"Share Code: {sub['name']}",
                     key=f"share_{sub['subject_code']}",
@@ -389,54 +389,51 @@ def teacher_tab_manage_subjects():
         st.info("NO SUBJECTS FOUND. CREATE ONE ABOVE")
 
 
-def teacher_tab_attendence_records():
+def teacher_tab_attendance_records():
 
     st.header('Attendance Records')
 
     teacher_id = st.session_state.teacher_data['teacher_id']
 
-    records = get_attendence_for_teacher(teacher_id)
+    records = get_attendance_for_teacher(teacher_id)
     if not records:
         return
-    
+
     data = []
 
     for r in records:
         ts = r.get('timestamp')
 
         data.append({
-            "ts_group": ts.split(".")[0] if ts else None, 
-            "Time" : datetime.fromisoformat(ts).strftime("%Y-%m-%d %I:%M %p") if ts else "N'A", 
-            "Subject" : r['subjects']['name'],
-            "Subject Code" : r['subjects']['subject_code'],
-            "is_present" : bool(r.get('is_present', False))
+            "ts_group": ts.split(".")[0] if ts else None,
+            "Time": datetime.fromisoformat(ts).strftime("%Y-%m-%d %I:%M %p") if ts else "N/A",
+            "Subject": r['subjects']['name'],
+            "Subject Code": r['subjects']['subject_code'],
+            "is_present": bool(r.get('is_present', False))
         })
 
     df = pd.DataFrame(data)
 
-
     summary = (
         df.groupby(['ts_group', 'Time', 'Subject', 'Subject Code'])
         .agg(
-            Present_Count = ('is_present', 'sum'),
-            Total_Count = ('is_present', 'count')
+            Present_Count=('is_present', 'sum'),
+            Total_Count=('is_present', 'count')
         ).reset_index()
-
-
-
     )
 
-
-    summary ['Attendence Stats'] = (
-        "✅" + summary['Present_Count'].astype(str) + " /" 
-        + summary['Total_Count'].astype(str) + 'Students'
+    summary['Attendance Stats'] = (
+        "✅" + summary['Present_Count'].astype(str) + " /"
+        + summary['Total_Count'].astype(str) + ' Students'
     )
 
-    display_df = (summary.sort_values(by='ts_group', ascending=False)
-                    [['Time', 'Subject', 'Subject Code', 'Attendence Stats']]
-                  
-                  )
+    display_df = (
+        summary.sort_values(by='ts_group', ascending=False)
+        [['Time', 'Subject', 'Subject Code', 'Attendance Stats']]
+    )
+
     st.dataframe(display_df, use_container_width=True, hide_index=True)
+
 
 def login_teacher(username, password):
 

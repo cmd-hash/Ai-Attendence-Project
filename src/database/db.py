@@ -136,12 +136,9 @@ def get_teacher_subjects(teacher_id):
 
     for sub in subjects:
 
-        # Total students
         subject_students = sub.get("subject_students", [])
         sub['total_students'] = len(subject_students)
 
-        # FIX: truncate timestamp to minute level (YYYY-MM-DDTHH:MM)
-        # so logs from the same session are grouped correctly
         attendance_logs = sub.get('attendance_logs', [])
         unique_sessions = len(
             set(
@@ -151,7 +148,6 @@ def get_teacher_subjects(teacher_id):
         )
         sub['total_classes'] = unique_sessions
 
-        # Remove nested data
         sub.pop('subject_students', None)
         sub.pop('attendance_logs', None)
 
@@ -202,7 +198,7 @@ def get_student_subjects(student_id):
     return response.data
 
 
-def get_student_attendence(student_id):
+def get_student_attendance(student_id):
 
     response = (
         supabase
@@ -215,7 +211,7 @@ def get_student_attendence(student_id):
     return response.data
 
 
-def create_attendence(logs):
+def create_attendance(logs):
 
     response = (
         supabase
@@ -227,6 +223,12 @@ def create_attendence(logs):
     return response.data
 
 
-def get_attendence_for_teacher(teacher_id):
-    response = supabase.table('attendance_logs').select("*, subjects!inner(*)").eq('subjects.teacher_id', teacher_id).execute()
+def get_attendance_for_teacher(teacher_id):
+    response = (
+        supabase
+        .table('attendance_logs')
+        .select("*, subjects!inner(*)")
+        .eq('subjects.teacher_id', teacher_id)
+        .execute()
+    )
     return response.data

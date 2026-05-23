@@ -6,7 +6,7 @@ from src.componets.dialog_auto_enroll import auto_enroll_dialog
 
 def main():
     st.set_page_config(
-        page_title='Quick Attendence - Make Attendence Using AI..',
+        page_title='Quick Attendance - Make Attendance Using AI..',
         page_icon="https://cdn-icons-gif.flaticon.com/19035/19035057.gif"
     )
 
