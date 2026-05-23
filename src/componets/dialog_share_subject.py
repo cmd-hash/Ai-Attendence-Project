@@ -8,7 +8,7 @@ import io
 
 @st.dialog("Share Class Link!")
 def share_subject_dialog(subject_name, subject_code):
-    app_domain = "quickSnap-main.streamlit.app"
+    app_domain = "quickSnap-main.streamlit.a[[]]"
     join_url = f"{app_domain}/?join-code={subject_code}"
 
     st.header("Scan To Join ")
